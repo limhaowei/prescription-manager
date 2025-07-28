@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Medicine Manager",
+          title: "Prescription Manager",
   description:
     "A modern pharmacy management system for registering medicines and creating prescriptions.",
 };

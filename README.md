@@ -1,4 +1,4 @@
-# Medicine Manager
+# Prescription Manager
 
 A modern pharmacy management system with a beautiful glass morphism UI for registering medicines and creating prescriptions with PDF export.
 

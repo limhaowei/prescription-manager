@@ -1,7 +1,5 @@
 "use client";
 
-import { AnimatedNavFramer } from "@/components/ui/navigation-bar-animation";
-import { Footer } from "@/components/ui/footer";
 import { BGPattern } from "@/components/ui/bg-pattern";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -13,6 +11,7 @@ import { MedicineForm } from "@/components/medicine-form";
 import { MedicineList } from "@/components/medicine-list";
 import { PrescriptionBuilder } from "@/components/prescription-builder";
 import { PrescriptionList } from "@/components/prescription-list";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -39,7 +38,10 @@ export default function Home() {
         className="fixed inset-0"
       />
       
-      <AnimatedNavFramer />
+      {/* Theme Toggle */}
+      <div className="fixed top-6 right-6 z-50">
+        <ModeToggle />
+      </div>
       
       {/* Hero Section with Glass Effect */}
       <section className="relative w-full py-20 px-4 overflow-hidden">
@@ -52,7 +54,7 @@ export default function Home() {
           <div className="glass-card rounded-3xl p-12 mb-8 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-3xl" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent mb-4 relative z-10">
-              Medicine Manager
+              Prescription Manager
             </h1>
             <p className="text-xl text-muted-foreground relative z-10">
               Streamline your pharmacy operations with our modern prescription management system
@@ -157,7 +159,7 @@ export default function Home() {
         </Tabs>
       </section>
 
-      <Footer />
+
     </main>
   );
 }
