@@ -184,7 +184,7 @@ export function MedicineForm() {
 
             <Button 
               type="submit" 
-              className="w-full backdrop-blur-md bg-white/70 dark:bg-black/60 border border-black/10 dark:border-white/15 shadow-md text-black dark:text-white font-semibold hover:bg-white/80 dark:hover:bg-black/80 transition-colors" 
+              className="w-full text-lg shadow-lg border-2 border-primary bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground hover:bg-primary/90 hover:shadow-xl transition-colors duration-200" 
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? (

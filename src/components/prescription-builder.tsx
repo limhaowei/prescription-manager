@@ -365,7 +365,7 @@ export function PrescriptionBuilder() {
           <Button
             onClick={handleCreate}
             disabled={selectedMedicines.length === 0 || isCreating}
-            className="flex-1 glass-button hover:glass-button"
+            className="flex-1 text-lg shadow-lg border-2 border-primary bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground hover:bg-primary/90 hover:shadow-xl transition-colors duration-200"
           >
             {isCreating ? (
               <>
