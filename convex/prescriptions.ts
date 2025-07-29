@@ -8,6 +8,7 @@ export const createPrescription = mutation({
         medicineId: v.id("medicines"),
         timing: v.array(v.string()),
         dosage: v.optional(v.string()),
+        meal: v.optional(v.string()), // 'before' | 'after' | undefined
       })
     ),
   },
@@ -34,6 +35,7 @@ export const getPrescription = query({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
           dosage: v.optional(v.string()),
+          meal: v.optional(v.string()), // 'before' | 'after' | undefined
         })
       ),
       createdAt: v.number(),
@@ -57,6 +59,7 @@ export const listPrescriptions = query({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
           dosage: v.optional(v.string()),
+          meal: v.optional(v.string()), // 'before' | 'after' | undefined
         })
       ),
       createdAt: v.number(),
@@ -86,6 +89,7 @@ export const getPrescriptionWithMedicines = query({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
           dosage: v.optional(v.string()),
+          meal: v.optional(v.string()), // 'before' | 'after' | undefined
           medicineDetails: v.union(
             v.object({
               _id: v.id("medicines"),

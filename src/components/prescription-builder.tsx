@@ -46,6 +46,7 @@ type PrescriptionMedicine = {
   medicineDosage?: string;
   timing: string[];
   dosage?: string;
+  meal?: string; 
 };
 
 const timingOptions = [
@@ -75,6 +76,7 @@ export function PrescriptionBuilder() {
           medicineDosage: medicine.dosage,
           timing: ["morning"],
           dosage: "",
+          meal: undefined,
         },
       ]);
       setSearchValue("");
@@ -98,6 +100,14 @@ export function PrescriptionBuilder() {
     setSelectedMedicines(
       selectedMedicines.map(m =>
         m.medicineId === medicineId ? { ...m, dosage } : m
+      )
+    );
+  };
+
+  const updateMeal = (medicineId: Id<"medicines">, meal: string) => {
+    setSelectedMedicines(
+      selectedMedicines.map(m =>
+        m.medicineId === medicineId ? { ...m, meal } : m
       )
     );
   };
@@ -145,8 +155,9 @@ export function PrescriptionBuilder() {
         
         medsAtTime.forEach(med => {
           const dosageText = med.dosage || med.medicineDosage || "";
-          doc.text(`• ${med.medicineName} - ${dosageText}`, 25, yPos);
-          yPos += 6;
+          const mealText = med.meal ? ` (${med.meal === 'before' ? 'Before Meal' : 'After Meal'})` : "";
+          doc.text(`• ${med.medicineName} - ${dosageText}${mealText}`, 25, yPos);
+          yPos += 8; 
         });
         
         yPos += 4;
@@ -175,6 +186,7 @@ export function PrescriptionBuilder() {
         medicineId: med.medicineId,
         timing: med.timing,
         dosage: med.dosage,
+        meal: med.meal,
       }));
 
       await createPrescription({ medicines: prescriptionData });
@@ -351,6 +363,42 @@ export function PrescriptionBuilder() {
                             </label>
                           );
                         })}
+                      </div>
+                    </div>
+                    {/* Meal Selection */}
+                    <div className="space-y-2">
+                      <Label className="text-sm">Meal Instruction</Label>
+                      <div className="flex gap-2">
+                        <label className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all",
+                          medicine.meal === "before"
+                            ? "glass-button bg-primary/10"
+                            : "glass hover:glass-button"
+                        )}>
+                          <input
+                            type="radio"
+                            name={`meal-${medicine.medicineId}`}
+                            checked={medicine.meal === "before"}
+                            onChange={() => updateMeal(medicine.medicineId, "before")}
+                            className="accent-primary"
+                          />
+                          <span className="text-sm">Before Meal</span>
+                        </label>
+                        <label className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all",
+                          medicine.meal === "after"
+                            ? "glass-button bg-primary/10"
+                            : "glass hover:glass-button"
+                        )}>
+                          <input
+                            type="radio"
+                            name={`meal-${medicine.medicineId}`}
+                            checked={medicine.meal === "after"}
+                            onChange={() => updateMeal(medicine.medicineId, "after")}
+                            className="accent-primary"
+                          />
+                          <span className="text-sm">After Meal</span>
+                        </label>
                       </div>
                     </div>
                   </motion.div>
