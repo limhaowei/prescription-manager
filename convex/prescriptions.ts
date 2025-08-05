@@ -7,7 +7,7 @@ export const createPrescription = mutation({
       v.object({
         medicineId: v.id("medicines"),
         timing: v.array(v.string()),
-        dosage: v.optional(v.string()),
+        instruction: v.optional(v.string()),
         meal: v.optional(v.string()), // 'before' | 'after' | undefined
       })
     ),
@@ -34,7 +34,8 @@ export const getPrescription = query({
         v.object({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
-          dosage: v.optional(v.string()),
+          dosage: v.optional(v.string()), // Keep for backward compatibility
+          instruction: v.optional(v.string()),
           meal: v.optional(v.string()), // 'before' | 'after' | undefined
         })
       ),
@@ -58,7 +59,8 @@ export const listPrescriptions = query({
         v.object({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
-          dosage: v.optional(v.string()),
+          dosage: v.optional(v.string()), // Keep for backward compatibility
+          instruction: v.optional(v.string()),
           meal: v.optional(v.string()), // 'before' | 'after' | undefined
         })
       ),
@@ -88,7 +90,8 @@ export const getPrescriptionWithMedicines = query({
         v.object({
           medicineId: v.id("medicines"),
           timing: v.array(v.string()),
-          dosage: v.optional(v.string()),
+          dosage: v.optional(v.string()), // Keep for backward compatibility
+          instruction: v.optional(v.string()),
           meal: v.optional(v.string()), // 'before' | 'after' | undefined
           medicineDetails: v.union(
             v.object({

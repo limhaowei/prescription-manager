@@ -14,7 +14,9 @@ export default defineSchema({
       v.object({
         medicineId: v.id("medicines"),
         timing: v.array(v.string()),
-        dosage: v.optional(v.string()),
+        dosage: v.optional(v.string()), // Keep for backward compatibility
+        instruction: v.optional(v.string()), // New field
+        meal: v.optional(v.string()),
       })
     ),
     createdAt: v.number(),

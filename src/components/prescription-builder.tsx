@@ -45,7 +45,8 @@ type PrescriptionMedicine = {
   medicineType?: string;
   medicineDosage?: string;
   timing: string[];
-  dosage?: string;
+  dosage?: string; // Keep for backward compatibility
+  instruction?: string;
   meal?: string; 
 };
 
@@ -75,7 +76,7 @@ export function PrescriptionBuilder() {
           medicineType: medicine.type,
           medicineDosage: medicine.dosage,
           timing: ["morning"],
-          dosage: "",
+          instruction: "",
           meal: undefined,
         },
       ]);
@@ -96,10 +97,10 @@ export function PrescriptionBuilder() {
     );
   };
 
-  const updateDosage = (medicineId: Id<"medicines">, dosage: string) => {
+  const updateInstruction = (medicineId: Id<"medicines">, instruction: string) => {
     setSelectedMedicines(
       selectedMedicines.map(m =>
-        m.medicineId === medicineId ? { ...m, dosage } : m
+        m.medicineId === medicineId ? { ...m, instruction } : m
       )
     );
   };
@@ -154,9 +155,9 @@ export function PrescriptionBuilder() {
         doc.setFontSize(10);
         
         medsAtTime.forEach(med => {
-          const dosageText = med.dosage || med.medicineDosage || "";
+          const instructionText = med.instruction || med.dosage || med.medicineDosage || "";
           const mealText = med.meal ? ` (${med.meal === 'before' ? 'Before Meal' : 'After Meal'})` : "";
-          doc.text(`• ${med.medicineName} - ${dosageText}${mealText}`, 25, yPos);
+          doc.text(`• ${med.medicineName} - ${instructionText}${mealText}`, 25, yPos);
           yPos += 8; 
         });
         
@@ -185,7 +186,7 @@ export function PrescriptionBuilder() {
       const prescriptionData = selectedMedicines.map(med => ({
         medicineId: med.medicineId,
         timing: med.timing,
-        dosage: med.dosage,
+        instruction: med.instruction,
         meal: med.meal,
       }));
 
@@ -216,7 +217,7 @@ export function PrescriptionBuilder() {
         </motion.div>
         <CardTitle className="text-2xl">Create Prescription</CardTitle>
         <CardDescription>
-          Build a prescription by selecting medicines and their dosage timing
+          Build a prescription by selecting medicines and their instruction timing
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -317,13 +318,13 @@ export function PrescriptionBuilder() {
                       </Button>
                     </div>
 
-                    {/* Custom Dosage */}
+                    {/* Custom Instruction */}
                     <div className="space-y-2">
-                      <Label className="text-sm">Dosage (optional)</Label>
+                      <Label className="text-sm">Instructions (optional)</Label>
                       <Input
-                        placeholder="e.g., 1 tablet, 5ml"
-                        value={medicine.dosage}
-                        onChange={(e) => updateDosage(medicine.medicineId, e.target.value)}
+                        placeholder="e.g., 1 tablet, 5ml, after meals"
+                        value={medicine.instruction}
+                        onChange={(e) => updateInstruction(medicine.medicineId, e.target.value)}
                         className="glass-button h-9"
                       />
                     </div>

@@ -37,7 +37,8 @@ type PrescriptionWithMedicines = {
   medicines: Array<{
     medicineId: Id<"medicines">;
     timing: string[];
-    dosage?: string;
+    dosage?: string; // Keep for backward compatibility
+    instruction?: string;
     medicineDetails: {
       _id: Id<"medicines">;
       _creationTime: number;
@@ -132,8 +133,8 @@ export function PrescriptionList() {
         
         meds.forEach(med => {
           const medName = med.medicineDetails?.name || "Unknown Medicine";
-          const dosage = med.dosage || med.medicineDetails?.dosage || "";
-          doc.text(`• ${medName} - ${dosage}`, 25, yPos);
+          const instruction = med.instruction || med.dosage || med.medicineDetails?.dosage || "";
+          doc.text(`• ${medName} - ${instruction}`, 25, yPos);
           yPos += 6;
         });
         
@@ -259,7 +260,7 @@ export function PrescriptionList() {
                                 variant="secondary"
                                 className="glass-button text-xs"
                               >
-                                {med.dosage || "1 dose"}
+                                {med.instruction || med.dosage || "Standard dose"}
                               </Badge>
                             ))}
                           </div>
