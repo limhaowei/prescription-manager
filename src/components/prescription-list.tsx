@@ -92,22 +92,38 @@ export function PrescriptionList() {
 
   const generatePDF = (prescription: PrescriptionWithMedicines) => {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Header
-    doc.setFontSize(24);
-    doc.setTextColor(59, 130, 246);
-    doc.text("Medical Prescription", 105, 20, { align: "center" });
+    // Color scheme for elderly-friendly design
+    const colors = {
+      header: [59, 130, 246], // Blue
+      morning: [255, 193, 7], // Yellow/Orange
+      afternoon: [255, 152, 0], // Orange
+      night: [63, 81, 181], // Indigo
+      meal: [76, 175, 80], // Green
+      text: [33, 33, 33], // Dark gray
+      lightGray: [245, 245, 245],
+      border: [200, 200, 200],
+    };
+    
+    // Header with larger, friendly text
+    doc.setFontSize(28);
+    doc.setTextColor(colors.header[0], colors.header[1], colors.header[2]);
+    doc.setFont(undefined, "bold");
+    doc.text("Medical Prescription", pageWidth / 2, 25, { align: "center" });
     
     // Date
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Date: ${format(new Date(prescription.createdAt), "PPP")}`, 20, 35);
-    doc.text(`Prescription ID: ${prescription._id.slice(-8)}`, 20, 42);
-    
-    // Medicines
     doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Prescribed Medicines:", 20, 55);
+    doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+    doc.setFont(undefined, "normal");
+    const dateText = `Date: ${format(new Date(prescription.createdAt), "EEEE, MMMM d, yyyy")}`;
+    doc.text(dateText, 20, 45);
+    
+    // Prescription ID (smaller, less prominent)
+    doc.setFontSize(10);
+    doc.setTextColor(120, 120, 120);
+    doc.text(`ID: ${prescription._id.slice(-8)}`, 20, 52);
     
     let yPos = 65;
     
@@ -120,32 +136,81 @@ export function PrescriptionList() {
       });
     });
     
+    // Render by timing with visual boxes
     ["morning", "afternoon", "night"].forEach(time => {
       const meds = medicinesByTiming[time];
       if (meds && meds.length > 0) {
-        doc.setFontSize(12);
+        // Check if we need a new page
+        if (yPos > pageHeight - 80) {
+          doc.addPage();
+          yPos = 20;
+        }
+        
+        // Section background box
+        const boxHeight = 15 + (meds.length * 30) + 10;
+        const sectionColor = time === 'morning' ? colors.morning :
+                           time === 'afternoon' ? colors.afternoon : colors.night;
+        const label = time.charAt(0).toUpperCase() + time.slice(1);
+        
+        // Light background for section
+        doc.setFillColor(colors.lightGray[0], colors.lightGray[1], colors.lightGray[2]);
+        doc.roundedRect(15, yPos - 5, pageWidth - 30, boxHeight, 3, 3, 'F');
+        
+        // Colored border
+        doc.setDrawColor(sectionColor[0], sectionColor[1], sectionColor[2]);
+        doc.setLineWidth(2);
+        doc.roundedRect(15, yPos - 5, pageWidth - 30, boxHeight, 3, 3, 'D');
+        
+        // Section header
+        doc.setFontSize(18);
         doc.setFont(undefined, "bold");
-        doc.text(`${time.charAt(0).toUpperCase() + time.slice(1)}:`, 20, yPos);
-        yPos += 8;
+        doc.setTextColor(sectionColor[0], sectionColor[1], sectionColor[2]);
+        doc.text(`${label.toUpperCase()}`, 25, yPos + 8);
         
+        yPos += 20;
+        
+        // Medicines in this section
         doc.setFont(undefined, "normal");
-        doc.setFontSize(10);
+        doc.setFontSize(14); // Larger font for medicine names
         
-        meds.forEach(med => {
+        meds.forEach((med) => {
           const medName = med.medicineDetails?.name || "Unknown Medicine";
-          const instruction = med.instruction || med.dosage || med.medicineDetails?.dosage || "";
-          doc.text(`• ${medName} - ${instruction}`, 25, yPos);
-          yPos += 6;
+          
+          // Medicine name (bold, larger)
+          doc.setFont(undefined, "bold");
+          doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+          doc.text(medName, 30, yPos);
+          yPos += 10;
+          
+          // Instruction/dosage
+          doc.setFont(undefined, "normal");
+          doc.setFontSize(12);
+          const instruction = med.instruction || med.dosage || med.medicineDetails?.dosage || "As directed";
+          doc.setTextColor(80, 80, 80);
+          doc.text(`   Dosage: ${instruction}`, 30, yPos);
+          yPos += 8;
+          
+          // Meal timing if specified
+          if (med.meal) {
+            doc.setFontSize(11);
+            doc.setTextColor(colors.meal[0], colors.meal[1], colors.meal[2]);
+            const mealText = med.meal === 'before' ? "BEFORE MEAL" : "AFTER MEAL";
+            doc.text(`   ${mealText}`, 30, yPos);
+            yPos += 8;
+          }
+          
+          // Spacing between medicines
+          yPos += 5;
         });
         
-        yPos += 4;
+        yPos += 10; // Extra spacing after section
       }
     });
     
     // Footer
-    doc.setFontSize(8);
+    doc.setFontSize(10);
     doc.setTextColor(150, 150, 150);
-            doc.text("Generated by Prescription Manager", 105, 280, { align: "center" });
+    doc.text("Generated by Prescription Manager", pageWidth / 2, pageHeight - 10, { align: "center" });
     
     doc.save(`prescription-${prescription._id.slice(-8)}.pdf`);
     toast.success("PDF downloaded successfully!");
