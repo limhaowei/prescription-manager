@@ -39,6 +39,7 @@ type PrescriptionWithMedicines = {
     timing: string[];
     dosage?: string; // Keep for backward compatibility
     instruction?: string;
+    meal?: string; // 'before' | 'after' | undefined
     medicineDetails: {
       _id: Id<"medicines">;
       _creationTime: number;
